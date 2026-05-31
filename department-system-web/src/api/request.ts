@@ -57,7 +57,8 @@ request.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config
 })
 
-// 响应拦截器：处理业务错误和 Token 自动刷新
+// 响应拦截器：处理业务错误和 Token 自动刷新use = “注册一个会自动执行的函数”。
+// 在 Axios（Axios = 前端用来调用后端 API 的工具库。） 里，interceptors.response.use 就是：所有响应回来后，先执行你写的这两个函数，再决定是成功还是失败。
 // 成功时执行
 request.interceptors.response.use(
   (response) => {
@@ -101,6 +102,7 @@ request.interceptors.response.use(
       original._retry = true
 
       // 多个并发 401 请求共享同一个刷新 Promise，避免重复刷新
+      // 这里的做法是：第一个请求去刷新，后面的请求等着用同一个结果。
       if (!refreshing) {
         refreshing = axios
           .post<ApiResponse<{ access_token: string }>>(`${baseURL}/auth/refresh`, {
@@ -140,7 +142,15 @@ request.interceptors.response.use(
 )
 
 /** 从 API 响应中提取 data 字段，简化调用方代码 */
+// 导出一个叫 unwrap 的异步函数。
+// 它接收一个 Axios 请求（Promise），
+// 等请求完成后，从 { code, message, data } 里取出 data，
+// 返回类型是 T（由调用时指定）。
 export async function unwrap<T>(promise: Promise<{ data: ApiResponse<T> }>): Promise<T> {
   const { data } = await promise
   return data.data as T
 }
+
+
+// Axios 是基于 Promise 封装的 HTTP 请求库。发请求时 Axios 返回 Promise，你用 await / .then() 等它完成。
+// Axios 负责发 HTTP 请求，每次请求都返回一个 Promise；你用 await、.then()、unwrap 等来等这个 Promise 完成，拦截器则在 Promise 链上统一处理 Token 和错误。
