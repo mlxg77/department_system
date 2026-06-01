@@ -21,6 +21,7 @@ export const GENDER_OPTIONS: { label: string; value: Gender }[] = [
 ]
 
 /** 用户状态下拉选项 */
+// 没有指定类型是因为这里的结构比较简单，能够推断出，当然也可以写成：export const STATUS_OPTIONS: { label: string; value: number }[] = [
 export const STATUS_OPTIONS = [
   { label: '正常', value: 1 },
   { label: '禁用', value: 0 },
