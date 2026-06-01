@@ -19,6 +19,10 @@ import { getAccessToken, getRefreshToken } from '@/utils/storage'
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
+
+  // 后退时：浏览器负责「上一个 URL 是什么」，routes 负责「这个 URL 显示谁」，history 负责把两者接起来。
+  // routes：地图——/profile 对应哪个 .vue
+  // history：交通工具——怎么在浏览器里「记下并恢复」这些路径
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -30,7 +34,8 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/MainLayout.vue'),  // 带侧边栏的主布局
-      redirect: '/dashboard',
+      // 当用户只访问根路径 / 时，自动改去 /dashboard，不要停在「空的主布局」上。
+      redirect: '/dashboard', 
       children: [
         {
           path: 'dashboard',
