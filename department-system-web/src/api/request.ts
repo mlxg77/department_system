@@ -59,8 +59,9 @@ request.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 // 响应拦截器：处理业务错误和 Token 自动刷新use = “注册一个会自动执行的函数”。
 // 在 Axios（Axios = 前端用来调用后端 API 的工具库。） 里，interceptors.response.use 就是：所有响应回来后，先执行你写的这两个函数，再决定是成功还是失败。
-// 成功时执行
+
 request.interceptors.response.use(
+  // 成功时执行（response = HTTP 响应对象，包含 code、message、data 等字段）
   (response) => {
     const body = response.data as ApiResponse
     // 后端返回 code !== 0 表示业务错误
@@ -71,7 +72,7 @@ request.interceptors.response.use(
     }
     return response
   },
-  // 失败时执行
+  // 失败时执行（error = 错误对象，包含 response、config 等字段）
   async (error: AxiosError<ApiResponse>) => {
     const status = error.response?.status
     const body = error.response?.data
